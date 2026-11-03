@@ -4,6 +4,9 @@ Alle wesentlichen Änderungen an NotECAS werden hier dokumentiert. Das Projekt v
 
 ## [Unveröffentlicht]
 
+- GitHub-Projektbeschreibung zweisprachig auf Deutsch und Englisch erweitert
+- GitHub-Actions auf aktuelle, unveränderlich gepinnte Versionen aktualisiert
+
 ## [0.1.8] – 2026-11-03
 
 - öffentliche Projektunterlagen, GPLv3-Lizenz und GitHub-CI ergänzt
