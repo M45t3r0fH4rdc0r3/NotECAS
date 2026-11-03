@@ -1,0 +1,42 @@
+name: Kompatibilitätsproblem
+description: Problem beim Import oder Export historischer ECAS-Daten melden
+title: "[Kompatibilität] "
+labels: [compatibility, data-import]
+body:
+  - type: markdown
+    attributes:
+      value: Keine unveränderte private Datenbank hochladen. Bei Bedarf bitte zuerst einen anonymisierten Minimaldatensatz erstellen.
+  - type: dropdown
+    id: transfer
+    attributes:
+      label: Transferart
+      options:
+        - SQLite-Datenbank importieren
+        - SQLite-Datenbank exportieren
+        - CSV importieren
+        - CSV exportieren
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Bekannte Quellversion oder Schemaversion
+      placeholder: z. B. user_version 17
+  - type: textarea
+    id: result
+    attributes:
+      label: Validierungsbericht oder Fehlermeldung
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Erwartetes Ergebnis
+    validations:
+      required: true
+  - type: checkboxes
+    id: sample
+    attributes:
+      label: Beispieldaten
+      options:
+        - label: Ich kann bei Bedarf einen anonymisierten Minimaldatensatz bereitstellen.

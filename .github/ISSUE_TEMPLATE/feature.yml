@@ -1,0 +1,34 @@
+name: Funktionswunsch
+description: Eine Verbesserung für NotECAS vorschlagen
+title: "[Wunsch] "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Welches Problem soll gelöst werden?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Vorgeschlagene Lösung
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativen oder Ergänzungen
+  - type: dropdown
+    id: area
+    attributes:
+      label: Bereich
+      options:
+        - Zähler und Messwerte
+        - Analyse und Diagramme
+        - Datenbank-/CSV-Transfer
+        - Oberfläche und Bedienung
+        - Build und Entwicklung
+        - Sonstiges
+    validations:
+      required: true

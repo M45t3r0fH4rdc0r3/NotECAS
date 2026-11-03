@@ -1,0 +1,53 @@
+name: Fehlerbericht
+description: Einen reproduzierbaren Fehler in NotECAS melden
+title: "[Fehler] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Danke für den Bericht. Bitte niemals private Verbrauchsdaten oder unveränderte Datenbanken öffentlich anhängen.
+  - type: input
+    id: version
+    attributes:
+      label: NotECAS-Version
+      placeholder: 0.1.7
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Gerät und Android-Version
+      placeholder: Samsung …, Android … / One UI …
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Schritte zum Reproduzieren
+      placeholder: "1. …\n2. …\n3. …"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Erwartetes Verhalten
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Tatsächliches Verhalten
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Zusätzliche Informationen
+      description: Nur anonymisierte Screenshots, Logs oder Beispieldaten.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Datenschutz
+      options:
+        - label: Ich habe alle persönlichen Verbrauchs- und Kontaktdaten entfernt.
+          required: true

@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Sicherheitsproblem vertraulich melden
+    url: https://github.com/M45t3r0fH4rdc0r3/NotECAS/security/policy
+    about: Datenverlust, manipulierte Importe und andere Sicherheitsprobleme bitte nicht öffentlich melden.
