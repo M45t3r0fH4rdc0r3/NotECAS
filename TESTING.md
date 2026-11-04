@@ -17,10 +17,11 @@ Durch Wolfgang Lindner auf einem realen Gerät bestätigt:
 
 - Android 17
 - Samsung One UI 9
+- Samsung Galaxy S26 Ultra
 - App startet und ist bedienbar
 - ältere reale ECAS-Nutzerdatenbank erfolgreich importiert
 
-Nicht als vollständig geprüft gelten damit automatisch alle historischen ECAS-Versionen, sämtliche Sonderfälle oder ein vollständiger Import-/Export-Roundtrip. Das genaue Gerätemodell wurde für diesen Test noch nicht dokumentiert.
+Nicht als vollständig geprüft gelten damit automatisch alle historischen ECAS-Versionen, sämtliche Sonderfälle oder ein vollständiger Import-/Export-Roundtrip.
 
 ---
 
@@ -39,7 +40,8 @@ Confirmed by Wolfgang Lindner on a real device:
 
 - Android 17
 - Samsung One UI 9
+- Samsung Galaxy S26 Ultra
 - app starts and is usable
 - an older real-world ECAS user database was imported successfully
 
-This does not automatically certify every historical ECAS version, every edge case, or a complete import/export round trip. The exact device model has not yet been recorded for this test.
+This does not automatically certify every historical ECAS version, every edge case, or a complete import/export round trip.

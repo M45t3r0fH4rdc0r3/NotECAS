@@ -15,7 +15,7 @@
 
 NotECAS verwaltet Zählerstände für Strom, Gas, Wasser, Produktion, Sensoren und weitere Verbrauchswerte. Die App wurde eigenständig neu entwickelt und setzt auf Kotlin, Jetpack Compose und Material 3.
 
-> **Entwicklungsstand:** Version 0.1.8 ist eine Vorabversion. Die App läuft erfolgreich auf einem physischen Gerät mit Android 17 und Samsung One UI 9; außerdem wurde eine ältere ECAS-Nutzerdatenbank erfolgreich importiert. Vor produktiver Nutzung trotzdem immer ein aktuelles Datenbank-Backup anlegen.
+> **Entwicklungsstand:** Version 0.1.8 ist eine Vorabversion. Die App läuft erfolgreich auf einem Samsung Galaxy S26 Ultra mit Android 17 und One UI 9; außerdem wurde eine ältere ECAS-Nutzerdatenbank erfolgreich importiert. Vor produktiver Nutzung trotzdem immer ein aktuelles Datenbank-Backup anlegen.
 
 ### Funktionen
 
@@ -91,7 +91,7 @@ Fehlerberichte und Verbesserungsvorschläge sind willkommen. Bitte keine private
 - [x] Datenbank- und CSV-Transfer
 - [x] 64 automatisierte Tests und Android-Lint
 - [x] erfolgreicher Import einer älteren realen ECAS-Nutzerdatenbank
-- [x] physische Geräteprüfung auf Android 17 / Samsung One UI 9
+- [x] physische Geräteprüfung auf Samsung Galaxy S26 Ultra · Android 17 · One UI 9
 - [ ] signierter Release-Build und reproduzierbarer Release-Prozess
 
 ### Urheberrecht, Lizenz und Abgrenzung
@@ -113,7 +113,7 @@ NotECAS ist eine unabhängige Neuimplementierung zur Interoperabilität mit hist
 
 NotECAS tracks meter readings for electricity, gas, water, production, sensors, and other consumption data. It is an independently developed application built with Kotlin, Jetpack Compose, and Material 3.
 
-> **Development status:** Version 0.1.8 is a pre-release. The app has been run successfully on a physical Android 17 device with Samsung One UI 9, and an older real-world ECAS user database was imported successfully. Always keep a current database backup when working with important data.
+> **Development status:** Version 0.1.8 is a pre-release. The app has been run successfully on a Samsung Galaxy S26 Ultra with Android 17 and One UI 9, and an older real-world ECAS user database was imported successfully. Always keep a current database backup when working with important data.
 
 ### Features
 
@@ -189,7 +189,7 @@ Bug reports and improvements are welcome. Never upload private consumption data 
 - [x] SQLite database and CSV transfer
 - [x] 64 automated tests and Android Lint
 - [x] successful import of an older real-world ECAS user database
-- [x] physical device testing on Android 17 / Samsung One UI 9
+- [x] physical device testing on Samsung Galaxy S26 Ultra · Android 17 · One UI 9
 - [ ] signed release build and reproducible release process
 
 ### Copyright, license, and non-affiliation
