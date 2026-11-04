@@ -15,7 +15,7 @@
 
 NotECAS verwaltet Zählerstände für Strom, Gas, Wasser, Produktion, Sensoren und weitere Verbrauchswerte. Die App wurde eigenständig neu entwickelt und setzt auf Kotlin, Jetpack Compose und Material 3.
 
-> **Entwicklungsstand:** Version 0.1.8 ist eine Vorabversion. Vor produktiver Nutzung immer ein aktuelles Datenbank-Backup anlegen. Ein Test mit einer realen anonymisierten ECAS-Datenbank und die Geräteabnahme auf Samsung One UI 9 stehen noch aus.
+> **Entwicklungsstand:** Version 0.1.8 ist eine Vorabversion. Die App läuft erfolgreich auf einem physischen Gerät mit Android 17 und Samsung One UI 9; außerdem wurde eine ältere ECAS-Nutzerdatenbank erfolgreich importiert. Vor produktiver Nutzung trotzdem immer ein aktuelles Datenbank-Backup anlegen.
 
 ### Funktionen
 
@@ -73,6 +73,8 @@ app/build/outputs/apk/debug/app-debug.apk
 
 Der aktuelle Stand enthält 64 automatisierte Tests. GitHub Actions führt Tests, Android-Lint und den Debug-Build bei jedem Push und Pull Request erneut aus.
 
+Dokumentierter Teststand: [`TESTING.md`](TESTING.md)
+
 ### Mitwirken
 
 Fehlerberichte und Verbesserungsvorschläge sind willkommen. Bitte keine privaten Verbrauchsdaten oder unveränderten Datenbankexporte öffentlich hochladen.
@@ -88,8 +90,8 @@ Fehlerberichte und Verbesserungsvorschläge sind willkommen. Bitte keine private
 - [x] historische Jahresanalyse
 - [x] Datenbank- und CSV-Transfer
 - [x] 64 automatisierte Tests und Android-Lint
-- [ ] Test mit einer anonymisierten realen ECAS-Nutzerdatenbank
-- [ ] physische Geräteprüfung auf Samsung One UI 9
+- [x] erfolgreicher Import einer älteren realen ECAS-Nutzerdatenbank
+- [x] physische Geräteprüfung auf Android 17 / Samsung One UI 9
 - [ ] signierter Release-Build und reproduzierbarer Release-Prozess
 
 ### Urheberrecht, Lizenz und Abgrenzung
@@ -111,7 +113,7 @@ NotECAS ist eine unabhängige Neuimplementierung zur Interoperabilität mit hist
 
 NotECAS tracks meter readings for electricity, gas, water, production, sensors, and other consumption data. It is an independently developed application built with Kotlin, Jetpack Compose, and Material 3.
 
-> **Development status:** Version 0.1.8 is a pre-release. Always create a current database backup before using it with important data. Testing with a real anonymized ECAS database and physical validation on Samsung One UI 9 are still pending.
+> **Development status:** Version 0.1.8 is a pre-release. The app has been run successfully on a physical Android 17 device with Samsung One UI 9, and an older real-world ECAS user database was imported successfully. Always keep a current database backup when working with important data.
 
 ### Features
 
@@ -169,6 +171,8 @@ app/build/outputs/apk/debug/app-debug.apk
 
 The current codebase contains 64 automated tests. GitHub Actions reruns the tests, Android Lint, and the debug build for every push and pull request.
 
+Documented test status: [`TESTING.md`](TESTING.md)
+
 ### Contributing
 
 Bug reports and improvements are welcome. Never upload private consumption data or an unmodified personal database export to a public issue.
@@ -184,8 +188,8 @@ Bug reports and improvements are welcome. Never upload private consumption data 
 - [x] historical yearly analysis
 - [x] SQLite database and CSV transfer
 - [x] 64 automated tests and Android Lint
-- [ ] validation with a real anonymized ECAS user database
-- [ ] physical device testing on Samsung One UI 9
+- [x] successful import of an older real-world ECAS user database
+- [x] physical device testing on Android 17 / Samsung One UI 9
 - [ ] signed release build and reproducible release process
 
 ### Copyright, license, and non-affiliation

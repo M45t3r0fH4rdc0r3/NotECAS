@@ -6,6 +6,8 @@ Alle wesentlichen Änderungen an NotECAS werden hier dokumentiert. Das Projekt v
 
 - GitHub-Projektbeschreibung zweisprachig auf Deutsch und Englisch erweitert
 - GitHub-Actions auf aktuelle, unveränderlich gepinnte Versionen aktualisiert
+- erfolgreiche Geräteprüfung auf Android 17 / Samsung One UI 9 dokumentiert
+- erfolgreichen Import einer älteren realen ECAS-Nutzerdatenbank dokumentiert
 
 ## [0.1.8] – 2026-11-03
 
