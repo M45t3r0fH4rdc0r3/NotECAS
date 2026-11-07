@@ -1,15 +1,15 @@
 # Verifizierter Teststand / Verified test status
 
-Stand / Last updated: **2026-11-04**
+Stand / Last updated: **2026-11-07**
 
 ## Deutsch
 
 ### Automatisiert
 
-- 69 Unit-, Robolectric- und Compose-Tests: erfolgreich
-- Android-Lint: keine Beanstandungen
-- GitHub Actions: Tests, Lint und Debug-Build erfolgreich
-- CodeQL: GitHub Actions sowie Java/Kotlin erfolgreich analysiert
+- 76 Unit-, Robolectric- und Compose-Tests: erfolgreich
+- Android-Lint: 0 Fehler; 1 unkritischer Aktualisierungshinweis für Gradle 9.9
+- GitHub Actions: letzter veröffentlichter Stand erfolgreich; neue Änderungen werden zusätzlich im Pull Request geprüft
+- CodeQL: letzter veröffentlichter Stand für GitHub Actions sowie Java/Kotlin erfolgreich analysiert
 
 ### Physisch bestätigt
 
@@ -29,10 +29,10 @@ Nicht als vollständig geprüft gelten damit automatisch alle historischen ECAS-
 
 ### Automated
 
-- 69 unit, Robolectric, and Compose tests: passed
-- Android Lint: no issues
-- GitHub Actions: tests, lint, and debug build passed
-- CodeQL: GitHub Actions and Java/Kotlin analysis passed
+- 76 unit, Robolectric, and Compose tests: passed
+- Android Lint: 0 errors; 1 non-critical Gradle 9.9 update notice
+- GitHub Actions: latest published revision passed; new changes are additionally verified in the pull request
+- CodeQL: latest published revision passed for GitHub Actions and Java/Kotlin
 
 ### Physically confirmed
 

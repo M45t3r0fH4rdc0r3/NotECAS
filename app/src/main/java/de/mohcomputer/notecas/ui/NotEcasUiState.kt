@@ -8,6 +8,7 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.math.abs
 
 private val EDITOR_TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
@@ -36,6 +37,15 @@ data class AnalysisPoint(val label: String, val value: Double)
 data class AnalysisModel(
     val points: List<AnalysisPoint> = emptyList(), val consumption: Double = 0.0,
     val cost: Double = 0.0, val previousYearConsumption: Double? = null,
+    val previousPoints: List<AnalysisPoint> = emptyList(),
+)
+
+data class AnalysisTableRow(
+    val label: String,
+    val current: Double,
+    val previous: Double?,
+    val change: Double?,
+    val changePercent: Double?,
 )
 
 fun smoothAnalysisPoints(
@@ -257,21 +267,57 @@ fun buildAnalysis(
     val previous = consumption(previousStart, previousEnd).takeIf {
         ordered.first().timestamp <= previousStart && ordered.last().timestamp >= previousEnd
     }
-    val points = if (meter.type == 1) {
-        ordered.filter { it.timestamp in start..<end }
+    fun pointsFor(from: LocalDateTime, until: LocalDateTime): List<AnalysisPoint> = if (meter.type == 1) {
+        ordered.filter { it.timestamp in from..<until }
             .map { AnalysisPoint(it.timestamp.toLocalDate().toString(), MeterCalculations.scaledValue(domainMeter, it)) }
     } else {
         val bucketStarts = when (period) {
-            AnalysisPeriod.MONTH -> generateSequence(start) { it.plusDays(1) }.takeWhile { it < end }.toList()
-            AnalysisPeriod.QUARTER, AnalysisPeriod.YEAR -> generateSequence(start) { it.plusMonths(1) }.takeWhile { it < end }.toList()
+            AnalysisPeriod.MONTH -> generateSequence(from) { it.plusDays(1) }.takeWhile { it < until }.toList()
+            AnalysisPeriod.QUARTER, AnalysisPeriod.YEAR -> generateSequence(from) { it.plusMonths(1) }.takeWhile { it < until }.toList()
         }
-        bucketStarts.map { bucketStart ->
+        bucketStarts.mapNotNull { bucketStart ->
             val bucketEnd = when (period) {
-                AnalysisPeriod.MONTH -> minOf(bucketStart.plusDays(1), end)
-                AnalysisPeriod.QUARTER, AnalysisPeriod.YEAR -> minOf(bucketStart.plusMonths(1), end)
+                AnalysisPeriod.MONTH -> minOf(bucketStart.plusDays(1), until)
+                AnalysisPeriod.QUARTER, AnalysisPeriod.YEAR -> minOf(bucketStart.plusMonths(1), until)
             }
-            AnalysisPoint(bucketStart.toLocalDate().toString(), consumption(bucketStart, bucketEnd))
+            val hasCoverage = ordered.zipWithNext().any { (old, new) -> old.timestamp < bucketEnd && new.timestamp > bucketStart }
+            if (hasCoverage) AnalysisPoint(bucketStart.toLocalDate().toString(), consumption(bucketStart, bucketEnd)) else null
         }
     }
-    return AnalysisModel(points, current, current * meter.cost, previous)
+    val points = pointsFor(start, end)
+    val previousPoints = if (meter.type == 1 || previous != null) pointsFor(previousStart, previousEnd) else emptyList()
+    return AnalysisModel(points, current, current * meter.cost, previous, previousPoints)
+}
+
+fun buildAnalysisTableRows(
+    current: List<AnalysisPoint>,
+    previous: List<AnalysisPoint>,
+    period: AnalysisPeriod,
+    sensor: Boolean,
+): List<AnalysisTableRow> {
+    fun key(date: LocalDate): Int = if (period == AnalysisPeriod.MONTH) date.dayOfMonth else date.monthValue
+    fun aggregate(points: List<AnalysisPoint>): Map<Int, Double> = points.mapNotNull { point ->
+        runCatching { key(LocalDate.parse(point.label)) to point.value }.getOrNull()
+    }.groupBy({ it.first }, { it.second }).mapValues { (_, values) -> if (sensor) values.average() else values.sum() }
+
+    val currentValues = aggregate(current)
+    val previousValues = aggregate(previous)
+    val monthLabels = listOf("Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez")
+    return currentValues.map { (slot, value) ->
+        val previousValue = previousValues[slot]
+        val change = previousValue?.let { value - it }
+        AnalysisTableRow(
+            label = if (period == AnalysisPeriod.MONTH) "$slot." else monthLabels[slot - 1],
+            current = value,
+            previous = previousValue,
+            change = change,
+            changePercent = previousValue?.takeIf { abs(it) > 1e-9 }?.let { (value - it) / abs(it) * 100.0 },
+        )
+    }
+}
+
+fun analysisTableTotal(points: List<AnalysisPoint>, sensor: Boolean): Double? = when {
+    points.isEmpty() -> null
+    sensor -> points.map { it.value }.average()
+    else -> points.sumOf { it.value }
 }

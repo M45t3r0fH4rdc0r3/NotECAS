@@ -97,6 +97,32 @@ class NotEcasAppInteractionTest {
         compose.onNodeWithText("Dez").assertIsDisplayed()
     }
 
+    @Test fun `analysis table presents monthly current prior and total comparison`() {
+        render(
+            NotEcasUiState(
+                destination = RootDestination.ANALYSIS,
+                meters = listOf(electricity),
+                readings = mapOf(
+                    electricity.id to listOf(
+                        LegacyReadingRecord(1, electricity.id, "2024-01-01T00:00:00", 0.0),
+                        LegacyReadingRecord(2, electricity.id, "2025-01-01T00:00:00", 100.0),
+                        LegacyReadingRecord(3, electricity.id, "2026-01-01T00:00:00", 250.0),
+                    ),
+                ),
+                selectedMeterId = electricity.id,
+                analysisYear = 2025,
+                analysisMode = AnalysisMode.TABLE,
+                analysisPeriod = AnalysisPeriod.YEAR,
+            ),
+        )
+
+        compose.onAllNodesWithText("Monatsvergleich").assertCountEquals(1)
+        compose.onAllNodesWithText("Aktuell 2025").assertCountEquals(1)
+        compose.onAllNodesWithText("Vorjahr 2024").assertCountEquals(1)
+        compose.onNode(hasScrollAction()).performTouchInput { repeat(10) { swipeUp() } }
+        compose.onNodeWithText("Gesamt").assertIsDisplayed()
+    }
+
     @Test fun `overview renders the colorful dashboard hero`() {
         render(NotEcasUiState(meters = listOf(electricity), readings = mapOf(electricity.id to emptyList())))
 

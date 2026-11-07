@@ -4,6 +4,13 @@ Alle wesentlichen Änderungen an NotECAS werden hier dokumentiert. Das Projekt v
 
 ## [Unveröffentlicht]
 
+## [0.1.10] – 2026-11-07
+
+- Tabellenansicht nach dem bewährten ECAS-Vergleichsprinzip neu gestaltet
+- aktuelle Werte, Vorjahreswerte, absolute und prozentuale Änderungen pro Zeitraum ergänzt
+- Gesamtzeile für Verbrauch und Mittelwertzeile für Sensoren ergänzt
+- positive und negative Verbrauchsentwicklung farblich lesbar hervorgehoben
+
 ## [0.1.9] – 2026-11-07
 
 - lesbare Monatsbeschriftungen unter Trend- und Balkendiagrammen ergänzt
@@ -62,7 +69,8 @@ Alle wesentlichen Änderungen an NotECAS werden hier dokumentiert. Das Projekt v
 - Zähler, Messwerte, Analyse sowie SQLite-/CSV-Transfer
 - Android 17 / API 37 als Zielplattform
 
-[Unveröffentlicht]: https://github.com/M45t3r0fH4rdc0r3/NotECAS/compare/v0.1.9...HEAD
+[Unveröffentlicht]: https://github.com/M45t3r0fH4rdc0r3/NotECAS/compare/v0.1.10...HEAD
+[0.1.10]: https://github.com/M45t3r0fH4rdc0r3/NotECAS/releases/tag/v0.1.10
 [0.1.9]: https://github.com/M45t3r0fH4rdc0r3/NotECAS/releases/tag/v0.1.9
 [0.1.8]: https://github.com/M45t3r0fH4rdc0r3/NotECAS/releases/tag/v0.1.8
 [0.1.7]: https://github.com/M45t3r0fH4rdc0r3/NotECAS/releases/tag/v0.1.7
