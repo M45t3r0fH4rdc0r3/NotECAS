@@ -2,6 +2,7 @@ package de.mohcomputer.notecas.ui
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertCountEquals
+
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -12,6 +13,7 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
 import de.mohcomputer.notecas.BuildConfig
 import de.mohcomputer.notecas.data.LegacyMeterRecord
+import de.mohcomputer.notecas.data.LegacyReadingRecord
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -69,6 +71,30 @@ class NotEcasAppInteractionTest {
         compose.onNodeWithText("Jahr 2025").assertIsDisplayed()
         compose.onNodeWithContentDescription("Vorheriges Jahr").performClick()
         assertEquals(-1, delta)
+    }
+
+    @Test fun `year chart exposes readable month labels below the graph`() {
+        render(
+            NotEcasUiState(
+                destination = RootDestination.ANALYSIS,
+                meters = listOf(electricity),
+                readings = mapOf(
+                    electricity.id to listOf(
+                        LegacyReadingRecord(1, electricity.id, "2025-01-01T00:00:00", 0.0),
+                        LegacyReadingRecord(2, electricity.id, "2026-01-01T00:00:00", 120.0),
+                    ),
+                ),
+                selectedMeterId = electricity.id,
+                analysisYear = 2025,
+                analysisMode = AnalysisMode.BARS,
+                analysisPeriod = AnalysisPeriod.YEAR,
+            ),
+        )
+
+        compose.onNode(hasScrollAction()).performTouchInput { repeat(5) { swipeUp() } }
+        compose.onNodeWithText("Jan").assertIsDisplayed()
+        compose.onNodeWithText("Jul").assertIsDisplayed()
+        compose.onNodeWithText("Dez").assertIsDisplayed()
     }
 
     @Test fun `overview renders the colorful dashboard hero`() {

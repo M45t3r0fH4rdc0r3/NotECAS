@@ -258,7 +258,7 @@ fun buildAnalysis(
         ordered.first().timestamp <= previousStart && ordered.last().timestamp >= previousEnd
     }
     val points = if (meter.type == 1) {
-        ordered.filter { it.timestamp in start..end }
+        ordered.filter { it.timestamp in start..<end }
             .map { AnalysisPoint(it.timestamp.toLocalDate().toString(), MeterCalculations.scaledValue(domainMeter, it)) }
     } else {
         val bucketStarts = when (period) {
