@@ -413,10 +413,15 @@ private fun navIcon(item: RootDestination): ImageVector = when (item) {
             SummaryCard("Kosten", "${formatNumber(model.cost)} ${meter.currency ?: "€"}", EnergyTeal, Icons.Rounded.QueryStats, Modifier.weight(1f))
         }
         model.previousYearConsumption?.let { Text("Vorjahresvergleich: ${formatNumber(it)} ${meter.units} · ${formatNumber(model.consumption - it)} ${meter.units}", style = MaterialTheme.typography.titleMedium) }
-        if (model.points.size < 2) Text("Für die Visualisierung werden mindestens zwei Messwerte im Zeitraum benötigt.") else when (state.analysisMode) {
-            AnalysisMode.TREND -> DataChart(smoothAnalysisPoints(model.points, meter.vsf, meter.tsf), false, state.analysisPeriod)
-            AnalysisMode.BARS -> DataChart(model.points, true, state.analysisPeriod)
-            AnalysisMode.TABLE -> model.points.forEach { HorizontalDivider(); Row(Modifier.fillMaxWidth().padding(12.dp), horizontalArrangement = Arrangement.SpaceBetween) { Text(it.label); Text("${formatNumber(it.value)} ${meter.units}") } }
+        when (state.analysisMode) {
+            AnalysisMode.TABLE -> if (model.points.isEmpty()) Text("Keine Tabellenwerte im gewählten Zeitraum.") else AnalysisTable(model, meter, state.analysisPeriod, state.analysisYear)
+            AnalysisMode.TREND, AnalysisMode.BARS -> if (model.points.size < 2) {
+                Text("Für die Visualisierung werden mindestens zwei Messwerte im Zeitraum benötigt.")
+            } else if (state.analysisMode == AnalysisMode.TREND) {
+                DataChart(smoothAnalysisPoints(model.points, meter.vsf, meter.tsf), false, state.analysisPeriod)
+            } else {
+                DataChart(model.points, true, state.analysisPeriod)
+            }
         }
     }
 }
@@ -488,6 +493,89 @@ private fun navIcon(item: RootDestination): ImageVector = when (item) {
         }
     }
 }
+
+@Composable private fun AnalysisTable(model: AnalysisModel, meter: LegacyMeterRecord, period: AnalysisPeriod, year: Int) {
+    val sensor = meter.type == 1
+    val rows = remember(model.points, model.previousPoints, period, sensor) {
+        buildAnalysisTableRows(model.points, model.previousPoints, period, sensor)
+    }
+    val title = if (period == AnalysisPeriod.MONTH) "Tagesvergleich" else "Monatsvergleich"
+    val currentTotal = analysisTableTotal(model.points, sensor) ?: 0.0
+    val previousTotal = analysisTableTotal(model.previousPoints, sensor)
+    Surface(
+        shape = RoundedCornerShape(26.dp),
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        border = BorderStroke(1.dp, VividPurple.copy(alpha = .18f)),
+        modifier = Modifier.fillMaxWidth().semantics { contentDescription = "Vergleichstabelle mit Vorjahreswerten" },
+    ) {
+        Column {
+            Column(
+                Modifier.fillMaxWidth().background(Brush.horizontalGradient(listOf(VividPurple.copy(alpha = .16f), ElectricBlue.copy(alpha = .08f)))).padding(18.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                Text(
+                    if (sensor) "Durchschnittswerte im Vergleich zum Vorjahr" else "Verbrauch und Veränderung gegenüber dem Vorjahr",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                Text("Zeitraum", Modifier.weight(.7f), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2)
+                Text("Aktuell $year", Modifier.weight(1f), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2)
+                Text("Vorjahr ${year - 1}", Modifier.weight(1f), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2)
+            }
+            rows.forEachIndexed { index, row ->
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = .55f))
+                AnalysisTableLine(row, meter, index % 2 == 1)
+            }
+            HorizontalDivider(thickness = 2.dp, color = VividPurple.copy(alpha = .30f))
+            Column(Modifier.fillMaxWidth().background(VividPurple.copy(alpha = .08f)).padding(horizontal = 16.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text(if (sensor) "Mittelwert" else "Gesamt", Modifier.weight(.7f), fontWeight = FontWeight.Bold)
+                    Text("${formatNumber(currentTotal)} ${meter.units}", Modifier.weight(1f), fontWeight = FontWeight.Bold)
+                    Text(previousTotal?.let { "${formatNumber(it)} ${meter.units}" } ?: "–", Modifier.weight(1f), fontWeight = FontWeight.Bold)
+                }
+                if (previousTotal != null) {
+                    val change = currentTotal - previousTotal
+                    val percent = if (abs(previousTotal) > 1e-9) change / abs(previousTotal) * 100.0 else null
+                    Text("Gesamtänderung: ${signedNumber(change)} ${meter.units}${percent?.let { " · ${signedNumber(it)} %" }.orEmpty()}", style = MaterialTheme.typography.labelLarge, color = comparisonColor(change, meter))
+                }
+            }
+        }
+    }
+}
+
+@Composable private fun AnalysisTableLine(row: AnalysisTableRow, meter: LegacyMeterRecord, shaded: Boolean) {
+    val rowDescription = buildString {
+        append("${row.label}: aktuell ${formatNumber(row.current)} ${meter.units}")
+        row.previous?.let { append(", Vorjahr ${formatNumber(it)} ${meter.units}") }
+        row.change?.let { append(", Änderung ${signedNumber(it)} ${meter.units}") }
+    }
+    Column(
+        Modifier.fillMaxWidth().background(if (shaded) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = .26f) else Color.Transparent).semantics { contentDescription = rowDescription }.padding(horizontal = 16.dp, vertical = 11.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(row.label, Modifier.weight(.7f), fontWeight = FontWeight.Bold)
+            Text("${formatNumber(row.current)} ${meter.units}", Modifier.weight(1f), fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Text(row.previous?.let { "${formatNumber(it)} ${meter.units}" } ?: "–", Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
+        }
+        row.change?.let { change ->
+            val percent = row.changePercent?.let { " · ${signedNumber(it)} %" }.orEmpty()
+            Text("Änderung: ${signedNumber(change)} ${meter.units}$percent", style = MaterialTheme.typography.labelMedium, color = comparisonColor(change, meter), modifier = Modifier.align(Alignment.End))
+        }
+    }
+}
+
+private fun signedNumber(value: Double): String = (if (value > 0.0) "+" else "") + formatNumber(value)
+
+@Composable private fun comparisonColor(change: Double, meter: LegacyMeterRecord): Color = when {
+    meter.type == 1 || abs(change) < 1e-9 -> MaterialTheme.colorScheme.onSurfaceVariant
+    (change > 0.0) == meter.production -> EnergyTeal
+    else -> MaterialTheme.colorScheme.error
+}
+
 @Composable private fun DataChart(points: List<AnalysisPoint>, bars: Boolean, period: AnalysisPeriod) {
     val primary = VividPurple
     val secondary = ElectricBlue

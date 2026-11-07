@@ -104,6 +104,93 @@ class NotEcasReducerTest {
         assertEquals(46.5, model.cost, 0.0001)
         assertEquals(100.0, model.previousYearConsumption ?: Double.NaN, 0.0001)
         assertTrue(model.points.any { it.label.startsWith("2025-") })
+        assertEquals(12, model.previousPoints.size)
+        assertEquals(100.0, model.previousPoints.sumOf { it.value }, 0.0001)
+    }
+
+    @Test fun `annual comparison table contains prior year delta and percentage`() {
+        val rows = buildAnalysisTableRows(
+            current = listOf(AnalysisPoint("2025-01-01", 10.0), AnalysisPoint("2025-02-01", 20.0)),
+            previous = listOf(AnalysisPoint("2024-01-01", 8.0), AnalysisPoint("2024-02-01", 25.0)),
+            period = AnalysisPeriod.YEAR,
+            sensor = false,
+        )
+
+        assertEquals("Jan", rows.first().label)
+        assertEquals(10.0, rows.first().current, 0.0)
+        assertEquals(8.0, rows.first().previous ?: Double.NaN, 0.0)
+        assertEquals(2.0, rows.first().change ?: Double.NaN, 0.0)
+        assertEquals(25.0, rows.first().changePercent ?: Double.NaN, 0.0)
+    }
+
+    @Test fun `sensor comparison table averages repeated readings per month`() {
+        val rows = buildAnalysisTableRows(
+            current = listOf(AnalysisPoint("2025-01-02", 10.0), AnalysisPoint("2025-01-20", 14.0)),
+            previous = listOf(AnalysisPoint("2024-01-05", 8.0), AnalysisPoint("2024-01-25", 12.0)),
+            period = AnalysisPeriod.YEAR,
+            sensor = true,
+        )
+
+        assertEquals(1, rows.size)
+        assertEquals(12.0, rows.single().current, 0.0)
+        assertEquals(10.0, rows.single().previous ?: Double.NaN, 0.0)
+    }
+
+    @Test fun `analysis leaves a cumulative period without interval coverage empty`() {
+        val model = buildAnalysis(
+            meter = meter,
+            rows = listOf(
+                LegacyReadingRecord(1, meter.id, "2024-01-01T00:00:00", 0.0),
+                LegacyReadingRecord(2, meter.id, "2024-12-31T00:00:00", 100.0),
+            ),
+            period = AnalysisPeriod.YEAR,
+            now = java.time.LocalDateTime.of(2026, 7, 1, 0, 0),
+            year = 2025,
+        )
+
+        assertTrue(model.points.isEmpty())
+    }
+
+    @Test fun `analysis omits cumulative buckets without interval coverage`() {
+        val model = buildAnalysis(
+            meter = meter,
+            rows = listOf(
+                LegacyReadingRecord(1, meter.id, "2025-01-15T00:00:00", 0.0),
+                LegacyReadingRecord(2, meter.id, "2025-02-15T00:00:00", 31.0),
+            ),
+            period = AnalysisPeriod.YEAR,
+            now = java.time.LocalDateTime.of(2026, 7, 1, 0, 0),
+            year = 2025,
+        )
+
+        assertEquals(listOf("2025-01-01", "2025-02-01"), model.points.map { it.label })
+        assertEquals(31.0, model.points.sumOf { it.value }, 0.0001)
+    }
+
+    @Test fun `sensor analysis keeps previous year readings without boundary coverage`() {
+        val sensor = meter.copy(type = 1)
+        val model = buildAnalysis(
+            meter = sensor,
+            rows = listOf(
+                LegacyReadingRecord(1, sensor.id, "2024-06-15T12:00:00", 10.0),
+                LegacyReadingRecord(2, sensor.id, "2025-06-15T12:00:00", 12.0),
+            ),
+            period = AnalysisPeriod.YEAR,
+            now = java.time.LocalDateTime.of(2026, 7, 1, 0, 0),
+            year = 2025,
+        )
+
+        assertEquals(listOf("2024-06-15"), model.previousPoints.map { it.label })
+    }
+
+    @Test fun `sensor table total averages all individual readings`() {
+        val points = listOf(
+            AnalysisPoint("2025-01-02", 10.0),
+            AnalysisPoint("2025-01-20", 14.0),
+            AnalysisPoint("2025-02-10", 100.0),
+        )
+
+        assertEquals(124.0 / 3.0, analysisTableTotal(points, sensor = true) ?: Double.NaN, 0.0001)
     }
 
     @Test fun `sensor analysis excludes readings at the end of each period`() {
