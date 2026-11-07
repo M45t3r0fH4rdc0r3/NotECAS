@@ -6,7 +6,7 @@ Stand / Last updated: **2026-11-04**
 
 ### Automatisiert
 
-- 64 Unit-, Robolectric- und Compose-Tests: erfolgreich
+- 69 Unit-, Robolectric- und Compose-Tests: erfolgreich
 - Android-Lint: keine Beanstandungen
 - GitHub Actions: Tests, Lint und Debug-Build erfolgreich
 - CodeQL: GitHub Actions sowie Java/Kotlin erfolgreich analysiert
@@ -29,7 +29,7 @@ Nicht als vollständig geprüft gelten damit automatisch alle historischen ECAS-
 
 ### Automated
 
-- 64 unit, Robolectric, and Compose tests: passed
+- 69 unit, Robolectric, and Compose tests: passed
 - Android Lint: no issues
 - GitHub Actions: tests, lint, and debug build passed
 - CodeQL: GitHub Actions and Java/Kotlin analysis passed

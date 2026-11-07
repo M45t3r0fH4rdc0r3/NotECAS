@@ -4,12 +4,17 @@ Alle wesentlichen Änderungen an NotECAS werden hier dokumentiert. Das Projekt v
 
 ## [Unveröffentlicht]
 
+## [0.1.9] – 2026-11-07
+
+- lesbare Monatsbeschriftungen unter Trend- und Balkendiagrammen ergänzt
+- Tagesansichten erhalten eine reduzierte, nicht überladene Datumsachse
+
+## [0.1.8] – 2026-11-03
+
 - GitHub-Projektbeschreibung zweisprachig auf Deutsch und Englisch erweitert
 - GitHub-Actions auf aktuelle, unveränderlich gepinnte Versionen aktualisiert
 - erfolgreiche Geräteprüfung auf Samsung Galaxy S26 Ultra mit Android 17 / One UI 9 dokumentiert
 - erfolgreichen Import einer älteren realen ECAS-Nutzerdatenbank dokumentiert
-
-## [0.1.8] – 2026-11-03
 
 - öffentliche Projektunterlagen, GPLv3-Lizenz und GitHub-CI ergänzt
 - automatische Android-Cloud-Sicherung sensibler Verbrauchsdaten deaktiviert
@@ -57,6 +62,7 @@ Alle wesentlichen Änderungen an NotECAS werden hier dokumentiert. Das Projekt v
 - Zähler, Messwerte, Analyse sowie SQLite-/CSV-Transfer
 - Android 17 / API 37 als Zielplattform
 
-[Unveröffentlicht]: https://github.com/M45t3r0fH4rdc0r3/NotECAS/compare/v0.1.8...HEAD
+[Unveröffentlicht]: https://github.com/M45t3r0fH4rdc0r3/NotECAS/compare/v0.1.9...HEAD
+[0.1.9]: https://github.com/M45t3r0fH4rdc0r3/NotECAS/releases/tag/v0.1.9
 [0.1.8]: https://github.com/M45t3r0fH4rdc0r3/NotECAS/releases/tag/v0.1.8
 [0.1.7]: https://github.com/M45t3r0fH4rdc0r3/NotECAS/releases/tag/v0.1.7

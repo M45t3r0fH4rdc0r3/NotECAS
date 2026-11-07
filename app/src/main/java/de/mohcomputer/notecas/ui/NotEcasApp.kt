@@ -36,6 +36,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -55,6 +56,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
 private val ElectricBlue = Color(0xFF536DFE)
 private val VividPurple = Color(0xFF7C4DFF)
@@ -412,8 +414,8 @@ private fun navIcon(item: RootDestination): ImageVector = when (item) {
         }
         model.previousYearConsumption?.let { Text("Vorjahresvergleich: ${formatNumber(it)} ${meter.units} · ${formatNumber(model.consumption - it)} ${meter.units}", style = MaterialTheme.typography.titleMedium) }
         if (model.points.size < 2) Text("Für die Visualisierung werden mindestens zwei Messwerte im Zeitraum benötigt.") else when (state.analysisMode) {
-            AnalysisMode.TREND -> DataChart(smoothAnalysisPoints(model.points, meter.vsf, meter.tsf), false)
-            AnalysisMode.BARS -> DataChart(model.points, true)
+            AnalysisMode.TREND -> DataChart(smoothAnalysisPoints(model.points, meter.vsf, meter.tsf), false, state.analysisPeriod)
+            AnalysisMode.BARS -> DataChart(model.points, true, state.analysisPeriod)
             AnalysisMode.TABLE -> model.points.forEach { HorizontalDivider(); Row(Modifier.fillMaxWidth().padding(12.dp), horizontalArrangement = Arrangement.SpaceBetween) { Text(it.label); Text("${formatNumber(it.value)} ${meter.units}") } }
         }
     }
@@ -486,27 +488,85 @@ private fun navIcon(item: RootDestination): ImageVector = when (item) {
         }
     }
 }
-@Composable private fun DataChart(points: List<AnalysisPoint>, bars: Boolean) {
+@Composable private fun DataChart(points: List<AnalysisPoint>, bars: Boolean, period: AnalysisPeriod) {
     val primary = VividPurple
     val secondary = ElectricBlue
+    val axisTicks = remember(points, period) { chartAxisTicks(points, period) }
     Surface(shape = RoundedCornerShape(28.dp), color = MaterialTheme.colorScheme.surfaceContainer, border = BorderStroke(1.dp, primary.copy(alpha = .16f)), modifier = Modifier.fillMaxWidth()) {
-        Canvas(
-            Modifier.fillMaxWidth().height(280.dp)
+        Column(
+            Modifier.fillMaxWidth()
                 .background(Brush.verticalGradient(listOf(primary.copy(alpha = .10f), Color.Transparent)), RoundedCornerShape(28.dp))
-                .padding(24.dp)
-                .semantics { contentDescription = if (bars) "Balkendiagramm mit echten Messwerten" else "Trenddiagramm mit geglätteter Darstellung" },
+                .semantics { contentDescription = if (bars) "Balkendiagramm mit Zeitachsenbeschriftung" else "Trenddiagramm mit Zeitachsenbeschriftung" },
         ) {
-            val min = points.minOf { it.value }; val max = points.maxOf { it.value }; val range = (max - min).takeIf { it != 0.0 } ?: 1.0
-            repeat(5) { index ->
-                val y = size.height * index / 4f
-                drawLine(primary.copy(alpha = .12f), Offset(0f, y), Offset(size.width, y), strokeWidth = 2f)
+            Canvas(Modifier.fillMaxWidth().height(244.dp).padding(start = 24.dp, top = 24.dp, end = 24.dp, bottom = 8.dp)) {
+                val min = points.minOf { it.value }; val max = points.maxOf { it.value }; val range = (max - min).takeIf { it != 0.0 } ?: 1.0
+                repeat(5) { index ->
+                    val y = size.height * index / 4f
+                    drawLine(primary.copy(alpha = .12f), Offset(0f, y), Offset(size.width, y), strokeWidth = 2f)
+                }
+                val coords = points.mapIndexed { index, point -> Offset(size.width * index / (points.size - 1).coerceAtLeast(1), size.height - ((point.value - min) / range).toFloat() * size.height) }
+                if (bars) coords.forEachIndexed { index, p ->
+                    val color = if (index % 2 == 0) primary else secondary
+                    drawLine(color, Offset(p.x, size.height), p, strokeWidth = (size.width / points.size * .58f).coerceAtLeast(10f), cap = StrokeCap.Round)
+                } else coords.zipWithNext().forEach { (a, b) -> drawLine(Brush.linearGradient(listOf(primary, secondary), a, b), a, b, strokeWidth = 7f, cap = StrokeCap.Round) }
+                coords.forEach { drawCircle(Color.White, 9f, it); drawCircle(primary, 6f, it) }
             }
-            val coords = points.mapIndexed { index, point -> Offset(size.width * index / (points.size - 1).coerceAtLeast(1), size.height - ((point.value - min) / range).toFloat() * size.height) }
-            if (bars) coords.forEachIndexed { index, p ->
-                val color = if (index % 2 == 0) primary else secondary
-                drawLine(color, Offset(p.x, size.height), p, strokeWidth = (size.width / points.size * .58f).coerceAtLeast(10f), cap = StrokeCap.Round)
-            } else coords.zipWithNext().forEach { (a, b) -> drawLine(Brush.linearGradient(listOf(primary, secondary), a, b), a, b, strokeWidth = 7f, cap = StrokeCap.Round) }
-            coords.forEach { drawCircle(Color.White, 9f, it); drawCircle(primary, 6f, it) }
+            ChartAxis(axisTicks, points.size, Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, bottom = 14.dp))
+        }
+    }
+}
+
+internal data class ChartAxisTick(val pointIndex: Int, val text: String)
+
+internal fun chartAxisTicks(points: List<AnalysisPoint>, period: AnalysisPeriod): List<ChartAxisTick> {
+    if (points.isEmpty()) return emptyList()
+    val dates = points.mapNotNull { point -> runCatching { LocalDate.parse(point.label) }.getOrNull() }
+    if (dates.size != points.size) {
+        return points.withIndex().toList().sampleEvenly(6).map { ChartAxisTick(it.index, it.value.label) }
+    }
+    val indexedDates = dates.withIndex()
+    val grouped = if (period == AnalysisPeriod.MONTH) {
+        indexedDates.groupBy { it.value }
+    } else {
+        indexedDates.groupBy { it.value.year to it.value.monthValue }
+    }
+    val months = listOf("Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez")
+    return grouped.values.map { entries ->
+        val representative = entries[entries.size / 2]
+        val text = if (period == AnalysisPeriod.MONTH) representative.value.dayOfMonth.toString() else months[representative.value.monthValue - 1]
+        ChartAxisTick(representative.index, text)
+    }.sampleEvenly(6)
+}
+
+private fun <T> List<T>.sampleEvenly(maxItems: Int): List<T> {
+    if (size <= maxItems) return this
+    return (0 until maxItems).map { position -> this[(position * lastIndex) / (maxItems - 1)] }.distinct()
+}
+
+@Composable private fun ChartAxis(ticks: List<ChartAxisTick>, pointCount: Int, modifier: Modifier = Modifier) {
+    Layout(
+        modifier = modifier.height(24.dp),
+        content = {
+            ticks.forEach { tick ->
+                Text(
+                    tick.text,
+                    maxLines = 1,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Medium,
+                )
+            }
+        },
+    ) { measurables, constraints ->
+        val placeables = measurables.map { it.measure(constraints.copy(minWidth = 0, minHeight = 0)) }
+        val width = constraints.maxWidth
+        val height = constraints.maxHeight
+        layout(width, height) {
+            placeables.forEachIndexed { index, placeable ->
+                val fraction = if (pointCount <= 1) .5f else ticks[index].pointIndex.toFloat() / (pointCount - 1)
+                val x = (fraction * width).roundToInt() - placeable.width / 2
+                placeable.placeRelative(x.coerceIn(0, (width - placeable.width).coerceAtLeast(0)), 0)
+            }
         }
     }
 }

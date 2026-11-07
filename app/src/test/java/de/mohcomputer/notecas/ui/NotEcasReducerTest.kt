@@ -106,6 +106,31 @@ class NotEcasReducerTest {
         assertTrue(model.points.any { it.label.startsWith("2025-") })
     }
 
+    @Test fun `sensor analysis excludes readings at the end of each period`() {
+        val sensor = meter.copy(type = 1)
+        val now = java.time.LocalDateTime.of(2026, 5, 15, 12, 0)
+        val cases = listOf(
+            Triple(AnalysisPeriod.MONTH, "2025-05-01T00:00:00", "2025-06-01T00:00:00"),
+            Triple(AnalysisPeriod.QUARTER, "2025-04-01T00:00:00", "2025-07-01T00:00:00"),
+            Triple(AnalysisPeriod.YEAR, "2025-01-01T00:00:00", "2026-01-01T00:00:00"),
+        )
+
+        cases.forEach { (period, start, exclusiveEnd) ->
+            val model = buildAnalysis(
+                meter = sensor,
+                rows = listOf(
+                    LegacyReadingRecord(1, sensor.id, start, 10.0),
+                    LegacyReadingRecord(2, sensor.id, exclusiveEnd, 20.0),
+                ),
+                period = period,
+                now = now,
+                year = 2025,
+            )
+
+            assertEquals("$period must exclude its end boundary", listOf(start.substringBefore('T')), model.points.map { it.label })
+        }
+    }
+
     @Test fun `ECAS smoothing changes only displayed trend points`() {
         val raw = listOf(
             AnalysisPoint("1", 0.0),
