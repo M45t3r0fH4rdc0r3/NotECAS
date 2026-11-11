@@ -15,7 +15,7 @@
 
 NotECAS verwaltet Zählerstände für Strom, Gas, Wasser, Produktion, Sensoren und weitere Verbrauchswerte. Die App wurde eigenständig neu entwickelt und setzt auf Kotlin, Jetpack Compose und Material 3.
 
-> **Entwicklungsstand:** Version 0.1.10 ist eine Vorabversion. Die App läuft erfolgreich auf einem Samsung Galaxy S26 Ultra mit Android 17 und One UI 9; außerdem wurde eine ältere ECAS-Nutzerdatenbank erfolgreich importiert. Vor produktiver Nutzung trotzdem immer ein aktuelles Datenbank-Backup anlegen.
+> **Entwicklungsstand:** Version 0.1.11 ist eine Vorabversion. Die App läuft erfolgreich auf einem Samsung Galaxy S26 Ultra mit Android 17 und One UI 9; außerdem wurde eine ältere ECAS-Nutzerdatenbank erfolgreich importiert. Vor produktiver Nutzung trotzdem immer ein aktuelles Datenbank-Backup anlegen.
 
 ### Funktionen
 
@@ -27,6 +27,7 @@ NotECAS verwaltet Zählerstände für Strom, Gas, Wasser, Produktion, Sensoren u
 - Glättung ausschließlich für die dargestellte Trendkurve; Rohwerte, Verbrauch und Kosten bleiben unverändert
 - Import und Export von ECAS-kompatiblen SQLite-Datenbanken
 - Import und Export von CSV-Dateien pro Zähler
+- Freigabe der lokalen Datenbank für direkte Android-Geräteübertragungen ab Android 9; die tatsächliche Übernahme hängt vom Gerätehersteller und dessen Umzugssoftware ab
 - lokale Datenspeicherung ohne Internet-Berechtigung
 - optionale Taschenlampe beim Ablesen eines Zählers
 
@@ -44,7 +45,7 @@ Die technische Interoperabilitätsbeschreibung steht in [`analysis/ECAS_COMPATIB
 - lokale Speicherung der Verbrauchsdaten
 - Import und Export nur über den Android-Dateidialog
 - Kamera-Berechtigung ausschließlich zur Steuerung der Taschenlampe
-- automatische Cloud-Sicherung und Geräteübertragung der App-Daten deaktiviert
+- automatische Cloud-Sicherung deaktiviert; bei einer direkten Geräteübertragung ab Android 9 darf Android ausschließlich die lokale Datenbank übernehmen
 - Details: [`PRIVACY.md`](PRIVACY.md)
 
 ### Systemvoraussetzungen
@@ -71,7 +72,7 @@ Die Debug-APK entsteht unter:
 app/build/outputs/apk/debug/app-debug.apk
 ```
 
-Der aktuelle Stand enthält 76 automatisierte Tests. GitHub Actions führt Tests, Android-Lint und den Debug-Build bei jedem Push und Pull Request erneut aus.
+Der aktuelle Stand enthält 83 automatisierte Tests. GitHub Actions führt Tests, Android-Lint und den Debug-Build bei jedem Push und Pull Request erneut aus.
 
 Dokumentierter Teststand: [`TESTING.md`](TESTING.md)
 
@@ -89,7 +90,7 @@ Fehlerberichte und Verbesserungsvorschläge sind willkommen. Bitte keine private
 - [x] Zähler-, Messwert- und Kostenverwaltung
 - [x] historische Jahresanalyse
 - [x] Datenbank- und CSV-Transfer
-- [x] 76 automatisierte Tests und Android-Lint
+- [x] 83 automatisierte Tests und Android-Lint
 - [x] erfolgreicher Import einer älteren realen ECAS-Nutzerdatenbank
 - [x] physische Geräteprüfung auf Samsung Galaxy S26 Ultra · Android 17 · One UI 9
 - [ ] signierter Release-Build und reproduzierbarer Release-Prozess
@@ -113,7 +114,7 @@ NotECAS ist eine unabhängige Neuimplementierung zur Interoperabilität mit hist
 
 NotECAS tracks meter readings for electricity, gas, water, production, sensors, and other consumption data. It is an independently developed application built with Kotlin, Jetpack Compose, and Material 3.
 
-> **Development status:** Version 0.1.10 is a pre-release. The app has been run successfully on a Samsung Galaxy S26 Ultra with Android 17 and One UI 9, and an older real-world ECAS user database was imported successfully. Always keep a current database backup when working with important data.
+> **Development status:** Version 0.1.11 is a pre-release. The app has been run successfully on a Samsung Galaxy S26 Ultra with Android 17 and One UI 9, and an older real-world ECAS user database was imported successfully. Always keep a current database backup when working with important data.
 
 ### Features
 
@@ -125,6 +126,7 @@ NotECAS tracks meter readings for electricity, gas, water, production, sensors, 
 - smoothing affects only the displayed trend line; raw readings, consumption, and costs remain unchanged
 - import and export of ECAS-compatible SQLite databases
 - per-meter CSV import and export
+- the local database is eligible for direct Android device-to-device transfer starting with Android 9; actual migration depends on the device manufacturer and transfer software
 - local data storage without Android internet permission
 - optional flashlight while reading a physical meter
 
@@ -142,7 +144,7 @@ The technical interoperability notes are available in [`analysis/ECAS_COMPATIBIL
 - consumption data is stored locally
 - files are imported or exported only through Android's system file picker
 - camera permission is used exclusively to control the flashlight
-- automatic cloud backup and device transfer of app data are disabled
+- automatic cloud backup is disabled; starting with Android 9, direct device transfer may copy only the local database
 - detailed German privacy statement: [`PRIVACY.md`](PRIVACY.md)
 
 ### Requirements
@@ -169,7 +171,7 @@ The debug APK is generated at:
 app/build/outputs/apk/debug/app-debug.apk
 ```
 
-The current codebase contains 76 automated tests. GitHub Actions reruns the tests, Android Lint, and the debug build for every push and pull request.
+The current codebase contains 83 automated tests. GitHub Actions reruns the tests, Android Lint, and the debug build for every push and pull request.
 
 Documented test status: [`TESTING.md`](TESTING.md)
 
@@ -187,7 +189,7 @@ Bug reports and improvements are welcome. Never upload private consumption data 
 - [x] meter, reading, and cost management
 - [x] historical yearly analysis
 - [x] SQLite database and CSV transfer
-- [x] 76 automated tests and Android Lint
+- [x] 83 automated tests and Android Lint
 - [x] successful import of an older real-world ECAS user database
 - [x] physical device testing on Samsung Galaxy S26 Ultra · Android 17 · One UI 9
 - [ ] signed release build and reproducible release process

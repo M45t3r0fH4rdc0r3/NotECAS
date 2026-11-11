@@ -1,6 +1,6 @@
 # Datenschutz bei NotECAS
 
-Stand: 3. November 2026
+Stand: 11. November 2026
 
 NotECAS ist eine lokal arbeitende Android-App zur Erfassung und Auswertung von Zählerständen.
 
@@ -28,7 +28,9 @@ Import und Export erfolgen nur nach einer Nutzeraktion über den Android-Dateidi
 
 ## Sicherung und Löschung
 
-Android-App-Backups sind für NotECAS deaktiviert, damit sensible Verbrauchsdaten nicht automatisch in eine Cloud-Sicherung übernommen werden. Exporte werden nur am vom Nutzer ausgewählten Ziel abgelegt.
+Automatische Cloud-Backups bleiben für NotECAS vollständig ausgeschlossen. Ab Android 9 darf das Betriebssystem bei einer vom Nutzer gestarteten direkten Android-Geräteübertragung ausschließlich die lokale NotECAS-Datenbank auf das neue Gerät übernehmen. Andere interne Dateien und Einstellungen werden nicht dafür freigegeben. Unter Android 8 bleibt auch die direkte Übertragung gesperrt, weil sich dort Cloud-Backup und Geräteübertragung nicht sicher getrennt freigeben lassen. Ob eine konkrete Herstellersoftware wie Samsung Smart Switch diese Android-Regeln unterstützt und die Daten tatsächlich übernimmt, hängt von Gerät und Softwareversion ab; ein manueller Datenbankexport bleibt deshalb die verlässlichste zusätzliche Sicherung.
+
+Exporte werden nur am vom Nutzer ausgewählten Ziel abgelegt.
 
 App-Daten können über die Android-Systemeinstellungen oder durch Deinstallation gelöscht werden. Selbst exportierte Dateien müssen am jeweiligen Speicherort separat gelöscht werden.
 

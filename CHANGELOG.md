@@ -4,6 +4,13 @@ Alle wesentlichen Änderungen an NotECAS werden hier dokumentiert. Das Projekt v
 
 ## [Unveröffentlicht]
 
+## [0.1.11] – 2026-11-11
+
+- direkte Android-Geräteübertragung der lokalen NotECAS-Datenbank ab Android 9 freigegeben
+- automatische Cloud-Sicherung und Übertragung anderer interner App-Dateien weiterhin ausgeschlossen
+- Backup-Regeln für Android 9 bis 11 sowie Android 12 und neuer getrennt abgesichert
+- automatisierte Tests für die Backup- und Übertragungskonfiguration auf Android 8, Android 9–11 und Android 12+ ergänzt
+
 ## [0.1.10] – 2026-11-07
 
 - Tabellenansicht nach dem bewährten ECAS-Vergleichsprinzip neu gestaltet
@@ -69,7 +76,8 @@ Alle wesentlichen Änderungen an NotECAS werden hier dokumentiert. Das Projekt v
 - Zähler, Messwerte, Analyse sowie SQLite-/CSV-Transfer
 - Android 17 / API 37 als Zielplattform
 
-[Unveröffentlicht]: https://github.com/M45t3r0fH4rdc0r3/NotECAS/compare/v0.1.10...HEAD
+[Unveröffentlicht]: https://github.com/M45t3r0fH4rdc0r3/NotECAS/compare/v0.1.11...HEAD
+[0.1.11]: https://github.com/M45t3r0fH4rdc0r3/NotECAS/releases/tag/v0.1.11
 [0.1.10]: https://github.com/M45t3r0fH4rdc0r3/NotECAS/releases/tag/v0.1.10
 [0.1.9]: https://github.com/M45t3r0fH4rdc0r3/NotECAS/releases/tag/v0.1.9
 [0.1.8]: https://github.com/M45t3r0fH4rdc0r3/NotECAS/releases/tag/v0.1.8
